@@ -37,7 +37,7 @@ return [
         'mongodb' => [
             'driver' => 'mongodb',
             'dsn' => env('DB_URI'),
-            'database' => 'sata-pfe',
+            'database' => 'topstage',
         ],
         'sqlite' => [
             'driver' => 'sqlite',
