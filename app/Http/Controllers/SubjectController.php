@@ -50,28 +50,8 @@ class SubjectController extends Controller
         return response("Please Select an Image", 400);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Subject  $subject
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Subject $subject)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Subject  $subject
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Subject $subject)
-    {
-        //
-    }
+
 
     /**
      * Remove the specified resource from storage.

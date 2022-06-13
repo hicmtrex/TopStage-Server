@@ -80,17 +80,7 @@ class AuthController extends Controller
         return response($response, 201);
     }
 
-    public function logout()
-    {
 
-        // $user = Auth::user();
-
-        // $user->currentAccessToken()->delete();
-
-        // return response([
-        //     'success' => true
-        // ]);
-    }
     public function index()
     {
         $users = User::paginate(10);
