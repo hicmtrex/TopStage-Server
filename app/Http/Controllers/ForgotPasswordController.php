@@ -16,7 +16,7 @@ class ForgotPasswordController extends Controller
     {
         $credentials = request()->validate(['email' => 'required|email']);
 
-        Password::sendResetLink($credentials);
+        //Password::sendResetLink($credentials);
         // return response()->json(["msg" => 'Reset password link sent on your email id.']);
 
         $fields = $request->validate([

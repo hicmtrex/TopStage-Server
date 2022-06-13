@@ -20,6 +20,7 @@ class Question extends EloquentModel
         'title',
         'content',
         'answers',
+        "topics",
         'categories',
         'difficulty'
 

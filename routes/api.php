@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\StageController;
+use App\Http\Controllers\SubjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,8 +20,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get("/subjects", [SubjectController::class, "index"]);
+
+
 
 Route::group(['middleware' => ['auth:sanctum', 'banned']], function () {
+
+
     // all users && stages
     Route::post("/users/logout", [AuthController::class, "logout"]);
     Route::post('password/reset', [ForgotPasswordController::class, "reset_stage"]);
@@ -33,13 +39,18 @@ Route::group(['middleware' => ['auth:sanctum', 'banned']], function () {
 
     Route::get("/answers", [AnswerController::class, "index"]);
     Route::get("/answers_stage", [AnswerController::class, "stage_answers"]);
+    Route::get("/answers/approvedresult", [AnswerController::class, "approvedResult"]);
+
+
     Route::post("/questions_answers", [AnswerController::class, "store"]);
     Route::get("/questions/quiz", [QuestionController::class, "questions"]);
 
 
+    // subjects
+    Route::post("/subjects", [SubjectController::class, "store"])->middleware('encadrant');
+    Route::delete("/subjects/{id}", [SubjectController::class, "destroy"])->middleware('encadrant');
 
     //encadrant
-
 
     //service_rh 
     Route::get("/users", [AuthController::class, "index"])->middleware("service_rh");
@@ -56,8 +67,6 @@ Route::group(['middleware' => ['auth:sanctum', 'banned']], function () {
     Route::post("/users", [AuthController::class, "store"])->middleware('coordinator');
     Route::delete("/users/{id}", [AuthController::class, "destroy"])->middleware('coordinator');
 });
-
-
 
 
 

@@ -18,6 +18,15 @@ class AnswerController extends Controller
         //
     }
 
+    public function approvedResult()
+    {
+
+
+        $results = Answer::all()->where('passed', true);
+
+        return  response()->json($results, 200);
+    }
+
     public function stage_answers()
     {
         $user = Auth::user();
@@ -41,7 +50,8 @@ class AnswerController extends Controller
             'categories' => 'required|string',
             'difficulty' => 'required|string',
             'score' => 'required',
-            'result' => 'required|boolean',
+            'passed' => 'required|boolean',
+            'result' => 'required',
         ]);
 
         $answer =   Answer::create([
@@ -51,6 +61,7 @@ class AnswerController extends Controller
             "difficulty" => $fields["difficulty"],
             "score" => $fields["score"],
             "result" => $fields["result"],
+            "passed" => $fields["passed"],
         ]);
 
         return response($answer, 201);

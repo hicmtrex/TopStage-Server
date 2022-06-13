@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+
 
 class QuestionController extends Controller
 {
@@ -23,17 +23,22 @@ class QuestionController extends Controller
     public function questions()
     {
         $questions = [];
+        $easy = Question::all()->where('difficulty', 'easy');
+        $medium = Question::all()->where('difficulty', 'medium');
+        $hard = Question::all()->where('difficulty', 'hard');
         $user = Auth::user();
-        if ($user->niveau === "btp" || $user->niveau === "bac") {
-            $questions = Question::all()->where('difficulty', "easy");
-            return  response($questions, 200);
-        } else if ($user->niveau === "bts" || $user->niveau === "licence") {
-            $questions = Question::all()->where('difficulty', "medium");
-            return  response($questions, 200);
-        } else if ($user->niveau === "ingénierie" || $user->niveau === "master") {
-            $questions = Question::all()->where('difficulty', "hard");
 
-            return  response($questions, 200);
+
+        if ($user->niveau === "bts" || $user->niveau === "licence") {
+
+            $questions = [$easy->random(3), $medium->random(4), $hard->random(3)];
+
+            return  response()->json($questions, 200);
+        } else if ($user->niveau === "ingénierie" || $user->niveau === "master") {
+
+            $questions = [$easy->random(3), $medium->random(3), $hard->random(4)];
+
+            return  response()->json($questions, 200);
         } else {
             return "no niveau";
         }

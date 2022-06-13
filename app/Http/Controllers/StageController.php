@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Stage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,11 +19,10 @@ class StageController extends Controller
             'last_name' => 'required|string',
             'email' => 'required|string|unique:stages,email',
             'password' => 'required|string|confirmed',
-            'cin' => 'required|numeric',
+            'niveau' => 'string|required',
+            'cin' => 'numeric',
             'phone' => 'numeric',
             'passport' => 'nullable|numeric',
-            'niveau' => 'required|string',
-            'domaine' => 'required|string',
             'image' => 'nullable',
 
 
@@ -31,19 +31,29 @@ class StageController extends Controller
             $imageFullName = $request->file('image')->getClientOriginalName();
             $request->file('image')->storeAs('images', $imageFullName);
 
-            $user = Stage::create([
-                'first_name' => $fields['first_name'],
-                'last_name' => $fields['last_name'],
-                'email' => $fields['email'],
-                'password' => bcrypt($fields['password']),
-                'cin' => $fields['cin'],
-                'domaine' => $fields['domaine'],
-                'niveau' => $fields['niveau'],
-                'phone' => $fields['phone'],
-                "status" => true,
-                "image" => Storage::url("images/" . $imageFullName)
-            ]);
-
+            if ($request->cin) {
+                $user = Stage::create([
+                    'first_name' => $fields['first_name'],
+                    'last_name' => $fields['last_name'],
+                    'email' => $fields['email'],
+                    'password' => bcrypt($fields['password']),
+                    'cin' => $fields['cin'],
+                    'niveau' => $fields['niveau'],
+                    "status" => true,
+                    "image" => Storage::url("images/" . $imageFullName)
+                ]);
+            } else {
+                $user = Stage::create([
+                    'first_name' => $fields['first_name'],
+                    'last_name' => $fields['last_name'],
+                    'email' => $fields['email'],
+                    'password' => bcrypt($fields['password']),
+                    'passport' => $fields['passport'],
+                    'niveau' => $fields['niveau'],
+                    "status" => true,
+                    "image" => Storage::url("images/" . $imageFullName)
+                ]);
+            }
             $token = $user->createToken('sara-pfe-user')->plainTextToken;
             $response = [
                 'user' => $user,
@@ -54,18 +64,30 @@ class StageController extends Controller
 
             return response($response, 201);
         } else {
+            if ($request->cin) {
+                $user = Stage::create([
+                    'first_name' => $fields['first_name'],
+                    'last_name' => $fields['last_name'],
+                    'email' => $fields['email'],
+                    'password' => bcrypt($fields['password']),
+                    'cin' => $fields['cin'],
+                    'niveau' => $fields['niveau'],
+                    "status" => true,
+                    "image" => null
+                ]);
+            } else {
+                $user = Stage::create([
+                    'first_name' => $fields['first_name'],
+                    'last_name' => $fields['last_name'],
+                    'email' => $fields['email'],
+                    'password' => bcrypt($fields['password']),
+                    'passport' => $fields['passport'],
+                    'niveau' => $fields['niveau'],
+                    "status" => true,
+                    "image" => null
+                ]);
+            }
 
-            $user = Stage::create([
-                'first_name' => $fields['first_name'],
-                'last_name' => $fields['last_name'],
-                'email' => $fields['email'],
-                'password' => bcrypt($fields['password']),
-                'cin' => $fields['cin'],
-                'domaine' => $fields['domaine'],
-                'niveau' => $fields['niveau'],
-                "status" => true,
-                "image" => null
-            ]);
 
             $token = $user->createToken('sara-pfe-user')->plainTextToken;
             $response = [
@@ -116,6 +138,13 @@ class StageController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
+
+        if ($user->encadrant === true && $user->service_rh === false) {
+            $stages = Stage::where("domaine", $user->domaine)->paginate(10);
+            return $stages;
+        }
+
         $stages = Stage::paginate(10);
         return $stages;
     }
